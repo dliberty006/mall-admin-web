@@ -77,8 +77,7 @@
         </el-table-column>
         <el-table-column label="状态"  align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.articleStatus == 20" >已保存</span>
-            <span v-if="scope.row.articleStatus == 30" >已上架</span>
+            <value-write code="content_status" :groupkey="scope.row.articleStatus"></value-write>
           </template>
         </el-table-column>
         <el-table-column label="上下架"  align="center">
@@ -119,9 +118,10 @@
 </template>
 <script>
   import {fetchList, updateStatus, deleteArticle} from '@/api/article'
-
+  import ValueWrite from '@/components/SysValue/valueWrite'
   export default {
     name: 'articleList',
+    components:{ValueWrite},
     data() {
       return {
         listQuery: {
@@ -141,10 +141,10 @@
           label: '全部'
         },{
           value: 20,
-          label: '已保存'
+          label: '下架'
         }, {
           value: 30,
-          label: '已上架'
+          label: '上架'
         }],
       }
     },

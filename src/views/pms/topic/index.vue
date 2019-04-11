@@ -48,21 +48,23 @@
         <el-table-column label="标签描述" align="center">
           <template slot-scope="scope">{{scope.row.topicDesc}}</template>
         </el-table-column>
-        <el-table-column label="是否显示"  align="center">
-          <template slot-scope="scope">
-            <el-switch
-              @change="handleShowStatusChange(scope.$index, scope.row)"
-              :active-value="1"
-              :inactive-value="0"
-              v-model="scope.row.showStatus">
-            </el-switch>
-          </template>
-        </el-table-column>
+        
         <el-table-column prop="create_time" sortable="custom" label="创建时间"  align="center">
           <template slot-scope="scope">{{scope.row.createTime}}</template>
         </el-table-column>
         <el-table-column label="修改时间" prop="update_time" sortable="custom"  align="center">
           <template slot-scope="scope">{{scope.row.updateTime}}</template>
+        </el-table-column>
+        <el-table-column label="状态"  align="center">
+          <template slot-scope="scope">
+            <value-write code="content_status" :groupkey="scope.row.showStatus"></value-write>
+          </template>
+        </el-table-column>
+        <el-table-column label="上下架"  align="center">
+          <template slot-scope="scope">
+            <el-button type="success" v-if="scope.row.showStatus == 20" round @click="handleStatusChange(scope.$index, scope.row,30)">上架</el-button>
+            <el-button type="warning" v-if="scope.row.showStatus == 30" round @click="handleStatusChange(scope.$index, scope.row,20)">下架</el-button>
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
@@ -95,9 +97,10 @@
 </template>
 <script>
   import {fetchList, updateShowStatus, deleteTopic} from '@/api/topic'
-
+  import ValueWrite from '@/components/SysValue/valueWrite'
   export default {
     name: 'topicList',
+    components:{ValueWrite},
     data() {
       return {
         listQuery: {
@@ -158,23 +161,29 @@
           }
          this.getList();
       },
-      handleShowStatusChange(index, row) {
+      handleStatusChange(index, row,showStatus) {
         let data = new URLSearchParams();
-        ;
         data.append("ids", row.id);
-        data.append("showStatus", row.showStatus);
-        updateShowStatus(data).then(response => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1000
+        data.append("showStatus", showStatus);
+
+        let confirmTitle = "确定上架标签"
+        if (status == 20) {
+          confirmTitle = "确定下架标签"
+        }
+
+        this.$confirm(confirmTitle, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          updateShowStatus(data).then(response => {
+            this.$message({
+              message: '成功',
+              type: 'success',
+              duration: 1000
+            });
+            this.getList();
           });
-        }).catch(error => {
-          if (row.showStatus === 0) {
-            row.showStatus = 1;
-          } else {
-            row.showStatus = 0;
-          }
         });
       },
       handleSizeChange(val) {

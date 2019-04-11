@@ -14,15 +14,9 @@
         <single-upload v-model="topic.topicImage"></single-upload>
       </el-form-item>
       
-      <el-form-item label="是否显示：">
-        <el-radio-group v-model="topic.showStatus">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
-        </el-radio-group>
-      </el-form-item>
       
       <el-form-item style="text-align:center">
-        <el-button type="primary" @click="onSubmit('topicFrom')">提交</el-button>
+        <el-button type="primary" @click="onSubmit('topicFrom')">保存</el-button>
         <el-button v-if="!isEdit" @click="resetForm('topicFrom')">重置</el-button>
         <el-button  @click="back()">返回</el-button>
       </el-form-item>

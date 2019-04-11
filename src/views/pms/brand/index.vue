@@ -59,23 +59,26 @@
         </el-table-column>
         <el-table-column label="品牌制造商" width="100" align="center">
           <template slot-scope="scope">
-            <el-switch
+            <!-- <el-switch
               @change="handleFactoryStatusChange(scope.$index, scope.row)"
               :active-value="1"
               :inactive-value="0"
               v-model="scope.row.factoryStatus">
-            </el-switch>
+            </el-switch> -->
+            <value-write code="sys_au_page_auth_flag" :groupkey="scope.row.factoryStatus"></value-write>
           </template>
         </el-table-column>
         <el-table-column label="是否显示" width="100" align="center">
           <template slot-scope="scope">
-            <el-switch
+           <!--  <el-switch
               @change="handleShowStatusChange(scope.$index, scope.row)"
               :active-value="1"
               :inactive-value="0"
               v-model="scope.row.showStatus">
-            </el-switch>
+            </el-switch> -->
+            <value-write code="sys_au_page_auth_flag" :groupkey="scope.row.showStatus"></value-write>
           </template>
+          
         </el-table-column>
         <el-table-column label="创建时间" width="150" align="center">
           <template slot-scope="scope">{{scope.row.createTime}}</template>
@@ -134,9 +137,10 @@
 </template>
 <script>
   import {fetchList, updateShowStatus, updateFactoryStatus, deleteBrand} from '@/api/brand'
-
+  import ValueWrite from '@/components/SysValue/valueWrite'
   export default {
     name: 'brandList',
+    components:{ValueWrite},
     data() {
       return {
         operates: [

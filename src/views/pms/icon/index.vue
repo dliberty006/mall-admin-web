@@ -70,8 +70,7 @@
         </el-table-column>
         <el-table-column label="状态"  align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.iconStatus == 20" >已保存</span>
-            <span v-if="scope.row.iconStatus == 30" >已上架</span>
+            <value-write code="content_status" :groupkey="scope.row.iconStatus"></value-write>
           </template>
         </el-table-column>
         <el-table-column label="上下架"  align="center">
@@ -112,9 +111,10 @@
 </template>
 <script>
   import {fetchList, updateStatus, deleteIcon} from '@/api/icon'
-
+  import ValueWrite from '@/components/SysValue/valueWrite'
   export default {
     name: 'iconList',
+    components:{ValueWrite},
     data() {
       return {
         listQuery: {
@@ -134,10 +134,10 @@
           label: '全部'
         },{
           value: 20,
-          label: '已保存'
+          label: '下架'
         }, {
           value: 30,
-          label: '已上架'
+          label: '上架'
         }],
       }
     },
