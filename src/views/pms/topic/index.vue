@@ -4,20 +4,22 @@
         <div>
           <i class="el-icon-search"></i>
           <span>筛选搜索</span>
-          <el-button
-            style="float: right"
-            @click="searchTopicList()"
-            type="primary"
-            size="small">
-            查询结果
-          </el-button>
+          
         </div>
         <div style="margin-top: 15px">
           <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
             <el-form-item label="输入搜索：">
               <el-input style="width: 203px" v-model="listQuery.keyword" placeholder="标签名称/关键字"></el-input>
             </el-form-item>
+            <el-button
+            style="margin-left: 20px"
+            @click="searchTopicList()"
+            type="primary"
+            size="small">
+            查询结果
+          </el-button>
           </el-form>
+          
         </div>
     </el-card>
     <el-card class="operate-container" shadow="never">
@@ -25,6 +27,7 @@
       <span>数据列表</span>
       <el-button
         class="btn-add"
+        type="success"
         @click="addTopic()"
         size="mini">
         添加

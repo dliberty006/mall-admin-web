@@ -4,13 +4,7 @@
         <div>
           <i class="el-icon-search"></i>
           <span>筛选搜索</span>
-          <el-button
-            style="float: right"
-            @click="searchIconList()"
-            type="primary"
-            size="small">
-            查询结果
-          </el-button>
+          
         </div>
         <div style="margin-top: 15px">
           <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
@@ -27,6 +21,13 @@
               </el-option>
             </el-select>
             </el-form-item>
+            <el-button
+            style="margin-left:20px"
+            @click="searchIconList()"
+            type="primary"
+            size="small">
+            查询结果
+          </el-button>
           </el-form>
         </div>
     </el-card>
@@ -35,6 +36,7 @@
       <span>数据列表</span>
       <el-button
         class="btn-add"
+        type="success"
         @click="addIcon()"
         size="mini">
         添加
