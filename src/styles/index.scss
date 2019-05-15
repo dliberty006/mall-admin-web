@@ -156,3 +156,17 @@ a:hover {
   color: #909399;
 }
 
+// tree
+.tree .el-tree-node__content {
+  height: 32px;
+}
+.file-tree-items .el-tree-node__label, .tree .el-tree-node__label {
+  color: #353535;
+}
+.el-tree  .el-tree-node  .el-tree-node__content  .el-tree-node__expand-icon{
+  display: none;
+}
+
+.el-tree  .el-tree-node  .el-tree-node__content  .custom-tree-node{
+  padding-left: 24px;
+}

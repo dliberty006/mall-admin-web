@@ -5,16 +5,24 @@
         <i class="el-icon-tickets"></i>
         <span>数据列表</span>
       </el-header>
-      <el-container>
-        <el-aside width="200px" style="border-right: 1px solid #d4dde2;">
+      <el-container class="my-el-container-content">
+        <el-aside width="200px" style="border-right: 1px solid #d4dde2;" class="tree">
+          <div class="refalsh">
+            <i class="el-icon-refresh"></i>
+            刷新
+          </div>
           <el-tree
             :props="props"
             :load="loadNode"
             lazy
             accordion
             highlight-current
-            :expand-on-click-node='false'
-            @check-change="handleCheckChange">
+            @check-change="handleCheckChange"
+            >
+            <span class="custom-tree-node" slot-scope="{node,data}">
+              <i class="el-icon-circle-plus-outline"></i>
+              <span>{{ node.label }}</span>
+            </span>
           </el-tree>
         </el-aside>
         <el-main class="my-el-main">
@@ -249,10 +257,21 @@
 </script>
 
 <style scoped>
+.refalsh{
+  height: 50px;
+    line-height: 50px;
+    padding: 0 24px;
+    color: #8a8e98;
+    cursor: pointer;
+    user-select: none;
+}
 .my-el-container{
     background: #fff;
     border: 1px solid #d4dde2;
     margin-bottom: 24px;
+}
+.my-el-container-content{
+  min-height: 500px;
 }
 .my-el-header{
   height: 50px;
