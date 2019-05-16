@@ -1,7 +1,7 @@
 <template> 
   <div>
     <el-upload
-      action="http://localhost:8080/file/upload"
+      action="/cms/file/upload"
       list-type="picture"
       :multiple="false" :show-file-list="showFileList"
       :file-list="fileList"
@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-  
+
 import { Message } from 'element-ui'
   export default {
     name: 'singleUpload',
@@ -85,7 +85,7 @@ import { Message } from 'element-ui'
           duration: 3 * 1000
           })
         }
-       
+
       }
     }
   }

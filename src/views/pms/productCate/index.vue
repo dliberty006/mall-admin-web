@@ -7,7 +7,7 @@
       </el-header>
       <el-container class="my-el-container-content">
         <el-aside width="200px" style="border-right: 1px solid #d4dde2;" class="tree">
-          <div class="refalsh">
+          <div class="refalsh" @click="refalshTree">
             <i class="el-icon-refresh"></i>
             刷新
           </div>
@@ -15,72 +15,38 @@
             :props="props"
             :load="loadNode"
             lazy
-            accordion
+            :accordion="false"
             highlight-current
             @check-change="handleCheckChange"
+            @node-expand="handleExpand"
+            @node-collapse="handleCollapse"
+            @node-click="handleClick"
             >
             <span class="custom-tree-node" slot-scope="{node,data}">
-              <i class="el-icon-circle-plus-outline"></i>
+              <i v-if="data.isChildren == '0'" class="el-icon-document icon-color"></i>
+              <i v-else class="el-icon-plus icon-border"></i>
               <span>{{ node.label }}</span>
             </span>
           </el-tree>
         </el-aside>
         <el-main class="my-el-main">
           <div>
+            <el-button style="margin-left: 20px;" size="small" type="success" icon="el-icon-plus" @click="handleAddProductCate">添加</el-button>
             <el-table ref="productCateTable"
                       style="width: 100%"
-                      :data="list" 
+                      :data="list"
                       v-loading="listLoading">
                 <el-table-column label="编号" width="100" align="center">
                   <template slot-scope="scope">{{scope.row.id}}</template>
                 </el-table-column>
                 <el-table-column label="分类名称" align="center">
-                  <template slot-scope="scope">{{scope.row.name}}</template>
+                  <template slot-scope="scope">{{scope.row.categoryName}}</template>
                 </el-table-column>
-                <el-table-column label="级别" width="100" align="center">
-                  <template slot-scope="scope">{{scope.row.level | levelFilter}}</template>
-                </el-table-column>
-                <el-table-column label="商品数量" width="100" align="center">
-                  <template slot-scope="scope">{{scope.row.productCount }}</template>
-                </el-table-column>
-                <el-table-column label="数量单位" width="100" align="center">
-                  <template slot-scope="scope">{{scope.row.productUnit }}</template>
-                </el-table-column>
-                <el-table-column label="导航栏" width="100" align="center">
-                  <template slot-scope="scope">
-                    <el-switch
-                      @change="handleNavStatusChange(scope.$index, scope.row)"
-                      :active-value="1"
-                      :inactive-value="0"
-                      v-model="scope.row.navStatus">
-                    </el-switch>
-                  </template>
-                </el-table-column>
-                <el-table-column label="是否显示" width="100" align="center">
-                  <template slot-scope="scope">
-                    <el-switch
-                      @change="handleShowStatusChange(scope.$index, scope.row)"
-                      :active-value="1"
-                      :inactive-value="0"
-                      v-model="scope.row.showStatus">
-                    </el-switch>
-                  </template>
+                <el-table-column label="分类编码" width="100" align="center">
+                  <template slot-scope="scope">{{scope.row.categoryCode}}</template>
                 </el-table-column>
                 <el-table-column label="排序" width="100" align="center">
-                  <template slot-scope="scope">{{scope.row.sort }}</template>
-                </el-table-column>
-                <el-table-column label="设置" width="200" align="center">
-                  <template slot-scope="scope">
-                    <el-button
-                      size="mini"
-                      :disabled="scope.row.level | disableNextLevel"
-                      @click="handleShowNextLevel(scope.$index, scope.row)">查看下级
-                    </el-button>
-                    <el-button
-                      size="mini"
-                      @click="handleTransferProduct(scope.$index, scope.row)">转移商品
-                    </el-button>
-                  </template>
+                  <template slot-scope="scope">{{scope.row.sort}}</template>
                 </el-table-column>
                 <el-table-column label="操作" width="200" align="center">
                   <template slot-scope="scope">
@@ -133,14 +99,17 @@
           label: 'categoryName',
           children: 'id'
         },
-        parentId: -1
+        parentId: -1,
+        addParentId:-1
       }
     },
     created() {
-      
+      var param = {};
+      param.parentId = this.parentId;
+      this.getList(param);
     },
     watch: {
-      
+
     },
     methods: {
       loadNode(node, resolve) {
@@ -149,30 +118,70 @@
         } else {
           this.parentId = -1
         }
-        fetchNode(this.parentId).then(response => {
-          return resolve(response.categoryList);
+        if((node.data && node.data.isChildren == '1') || !node.data){
+          fetchNode(this.parentId).then(response => {
+            return resolve(response.categoryList);
+          });
+        }else{
+          return resolve([]);
+        }
+      },
+      getList(param) {
+        this.listLoading = true;
+        fetchList(param.parentId, this.listQuery).then(response => {
+          this.listLoading = false;
+          this.list = response.rows;
+          this.total = response.total;
         });
+      },
+      handleClick(data , node , cus){
+        var param = {};
+        param.parentId = data.id;
+        this.listQuery.pageNum=1;
+        this.getList(param);
+        this.addParentId = data.id;
       },
       handleCheckChange(){
 
       },
-      resetParentId(){
-        if (this.$route.query.parentId != null) {
-          this.parentId = this.$route.query.parentId;
-        } else {
-          this.parentId = -1;
+      handleExpand(data , node , cus){
+        if(data.isChildren=='1'){
+          cus.$el.childNodes[0].children[1].children[0].classList = ["el-icon-minus icon-border"];
         }
       },
-      handleAddProductCate() {
-        this.$router.push('/pms/addProductCate');
+      handleCollapse(data , node , cus){
+        if(data.isChildren=='1'){
+          cus.$el.childNodes[0].children[1].children[0].classList = ["el-icon-plus icon-border"];
+        }
       },
-      getList() {
-        this.listLoading = true;
-        fetchList(this.parentId, this.listQuery).then(response => {
-          this.listLoading = false;
-          this.list = response.data.list;
-          this.total = response.data.total;
-        });
+      handleUpdate(index, row) {
+        this.$router.push({path:'/pms/updateProductCate',query:{id:row.id}});
+      },
+      handleDelete(index, row) {
+        if(row.isChildren == '1'){
+          this.$alert("此分类有下级分类，不可删除，请先删除下级分类","提示");
+        }else{
+          this.$confirm('是否要删除该分类', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteProductCate(row.id).then(response => {
+              this.$message({
+                message: '删除成功',
+                type: 'success',
+                duration: 1000
+              });
+              this.refalshTree();
+            });
+          });
+        }
+      },
+      refalshTree(){
+        window.location.reload();
+      },
+      handleAddProductCate() {
+        this.$router.push({path:'/pms/addProductCate',query:{parentId:this.addParentId}});
       },
       handleSizeChange(val) {
         this.listQuery.pageNum = 1;
@@ -216,42 +225,8 @@
       },
       handleTransferProduct(index, row) {
         console.log('handleAddProductCate');
-      },
-      handleUpdate(index, row) {
-        this.$router.push({path:'/pms/updateProductCate',query:{id:row.id}});
-      },
-      handleDelete(index, row) {
-        this.$confirm('是否要删除该品牌', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          deleteProductCate(row.id).then(response => {
-            this.$message({
-              message: '删除成功',
-              type: 'success',
-              duration: 1000
-            });
-            this.getList();
-          });
-        });
       }
-    },
-    filters: {
-      levelFilter(value) {
-        if (value === 0) {
-          return '一级';
-        } else if (value === 1) {
-          return '二级';
-        }
-      },
-      disableNextLevel(value) {
-        if (value === 0) {
-          return false;
-        } else {
-          return true;
-        }
-      }
+
     }
   }
 </script>
@@ -285,5 +260,13 @@
 }
 .my-el-main{
   padding: 20px 0;
+}
+.icon-border{
+  border: 1px solid #dddddd;
+  transform: scale(0.7);
+  padding: 2px;
+}
+.icon-color{
+  color: #dddddd;
 }
 </style>
